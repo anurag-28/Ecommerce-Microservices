@@ -1,4 +1,5 @@
 ﻿using Basket.Application.Commands;
+using Basket.Application.GrpcService;
 using Basket.Application.Queries;
 using Basket.Application.Responses;
 using MediatR;
