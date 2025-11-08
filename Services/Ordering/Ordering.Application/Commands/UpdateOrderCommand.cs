@@ -3,7 +3,7 @@ using Ordering.Application.Responses;
 
 namespace Ordering.Application.Commands
 {
-    public class UpdateOrderCommand : IRequest<OrderResponse>
+    public class UpdateOrderCommand : IRequest<Unit>
     {
         public int Id { get; set; }
         public string? UserName { get; set; }

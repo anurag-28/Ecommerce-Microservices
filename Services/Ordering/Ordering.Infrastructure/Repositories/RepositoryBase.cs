@@ -34,11 +34,10 @@ namespace Ordering.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
             return entity;
         }
-        public async Task<T> UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
-            return entity;
         }
         public async Task<bool> DeleteAsync(T entity)
         {
