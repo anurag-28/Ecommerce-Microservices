@@ -14,7 +14,6 @@ namespace Basket.Core.Entities
         public string ZipCode { get; set; }
         public string CardName { get; set; }
         public string CardNumber { get; set; }
-       
         public DateTime Expiration { get; set; }
         public string Cvv { get; set; }
         public int PaymentMethod { get; set; }

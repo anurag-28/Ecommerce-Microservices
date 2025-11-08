@@ -9,7 +9,7 @@ using Ordering.Core.Repositories;
 
 namespace Ordering.Application.Handlers
 {
-    public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, OrderResponse>
+    public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Unit>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
@@ -20,18 +20,17 @@ namespace Ordering.Application.Handlers
             _mapper = mapper;
             _logger = logger;
         }
-        public async Task<OrderResponse> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
             var orderToUpdate = await _orderRepository.GetByIdAsync(request.Id);
-            if(orderToUpdate == null)
+            if (orderToUpdate == null)
             {
                 throw new OrderNotFoundException(nameof(Order), request.Id);
             }
-            var orderEntity = _mapper.Map<Order>(orderToUpdate);
-            await _orderRepository.UpdateAsync(orderEntity);
+            _mapper.Map(request, orderToUpdate, typeof(UpdateOrderCommand), typeof(Order));
+            await _orderRepository.UpdateAsync(orderToUpdate);
             _logger.LogInformation($"Order {orderToUpdate.Id} is successfully updated");
-            var response = _mapper.Map<OrderResponse>(orderToUpdate);
-            return response;
+            return Unit.Value;
         }
     }
 }
