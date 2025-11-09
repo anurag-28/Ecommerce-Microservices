@@ -3,13 +3,19 @@ using Basket.Application.GrpcService;
 using Basket.Application.Handlers;
 using Basket.Core.Repositories;
 using Basket.Infrastructure.Repositories;
+using Common.Logging;
 using Discount.Grpc.Protos;
 using MassTransit;
+using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//Serilog Configuration
+builder.Host.UseSerilog(Logging.ConfigureLogger);
 
 builder.Services.AddControllers();
 // Add API Versioning
@@ -32,6 +38,35 @@ builder.Services.AddSwaggerGen(c => {
     {
         Title = "Basket.API",
         Version = "v1"
+    });
+    c.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Basket.API",
+        Version = "v2"
+    });
+
+    //Include xml comments if you have them
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
+
+    // Configure Swagger to use the versioning
+    c.DocInclusionPredicate((version, apiDescription) =>
+    {
+        if (!apiDescription.TryGetMethodInfo(out var methodInfo))
+        {
+            return false;
+        }
+
+        var versions = methodInfo.DeclaringType?
+            .GetCustomAttributes(true)
+            .OfType<ApiVersionAttribute>()
+            .SelectMany(attr => attr.Versions);
+
+        return versions?.Any(v => $"v{v.ToString()}" == version) ?? false;
     });
 });
 
@@ -73,7 +108,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API v1");
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "Basket.API v2");
+    });
 }
 
 app.UseAuthorization();

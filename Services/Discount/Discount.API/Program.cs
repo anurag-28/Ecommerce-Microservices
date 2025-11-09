@@ -4,10 +4,15 @@ using Discount.Core.Repositories;
 using Discount.Infrastructure.Extensions;
 using Discount.Infrastructure.Repositories;
 using System.Reflection;
+using Common.Logging;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//Serilog Configuration
+builder.Host.UseSerilog(Logging.ConfigureLogger);
 
 //Register AutoMapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
