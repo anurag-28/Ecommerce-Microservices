@@ -160,6 +160,17 @@ services:
     networks:
       - ecommerce-network
 
+  ocelot.apigateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development        
+    depends_on:
+      - catalog.api
+      - basket.api
+      - discount.api
+      - ordering.api
+    ports:
+      - "8010:8080"
+
   elasticsearch:
     container_name: elasticsearch
     environment:

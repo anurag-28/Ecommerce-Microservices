@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AccountRoutingModule } from './account-routing.module';
-import { MsalModule } from '@azure/msal-angular';
+import { MsalModule } from '@azure/msal-angular';  //for azure AD authentication
 
 
 @NgModule({
